@@ -1,0 +1,33 @@
+﻿
+@if (Configurations.Count <= 0)
+{
+    <span>No configurations specified!</span>
+}
+else
+{
+    <ul>
+        @foreach (Configuration configuration in Configurations)
+            {
+                <li><strong>@configuration.Name</strong>: @((MarkupString)GetConfigValueHtml(configuration.Value))</li>
+            }
+    </ul>
+
+}
+
+@code {
+    [Parameter]
+   public List<Configuration> Configurations { get; set; } = new List<Configuration>();
+
+    private string GetConfigValueHtml(string value)
+    {
+        string valueHtml = value;
+        bool boolValue;
+        if (bool.TryParse(value, out boolValue))
+        {
+            string boolString = boolValue ? "checked" : string.Empty;
+            valueHtml = $"<input type='checkbox' checked='{boolString}'/>";
+        }
+        return valueHtml;
+    }
+}
+

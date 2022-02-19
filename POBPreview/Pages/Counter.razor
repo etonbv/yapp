@@ -1,0 +1,587 @@
+﻿@page "/counter"
+@page "/counter/{code}"
+@inject NavigationManager NavManager;
+@using System.Xml;
+@using System.IO.Compression;
+@using System.Text;
+@using System.Linq;
+@using Models;
+@using Components; 
+
+<PageTitle>POB Preview</PageTitle>
+
+<h4>Level @buildLevel @ascendancy @className </h4>
+<h6>Pantheon: @majorPantheon / @minorPantheon </h6>
+<h6>Bandit Reward: @banditReward</h6>
+<div class="container">
+    <div class="row px-0 no-gutters">
+        <div class="col-12 col-md-8">
+            <div class="card mb-2">
+                <h5 class="card-header" style="background-color:#383838">Defensive Stats</h5>
+                <div class="card-body px-0" style="background-color:#252525">
+                    <div class="container" style="color:#FFFFFF;opacity:87">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-danger"><strong>Life</strong></span>: @unreservedLife/@totalLife <span class="badge alert-danger">@lifeFromTree% tree</span>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-primary"><strong>Mana</strong></span>: @unreservedMana/@totalMana <span class="badge alert-primary">@manaFromTree% tree</span>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-info"><strong>ES</strong></span>: @totalEs <span class="badge alert-info">@esFromTree% tree</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-danger"><strong>Life Regen</strong></span>: @lifeRegen
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-primary"><strong>Mana Regen</strong></span>: @manaRegen
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span class="text-info"><strong>ES Regen</strong></span>: @esRegen
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:#8F6A4B"><strong>Attack Block</strong></span>: @attackBlock%
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-6  col-md-4">
+                                <span style="color:#8F6A4B"><strong>Spell Block</strong></span>: @spellBlock%
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:#8F6A4B"><strong>Spell Suppression</strong></span>: @spellSuppression%
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:darkgray"><strong>Armor</strong></span>: @armor <span class="badge alert-secondary">@armorFromTree% tree</span>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:darkgray"><strong>Phys. Reduction</strong></span>: @physReduction%
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:darkgray"><strong>Evasion</strong></span>: @evasion <span class="badge alert-secondary">@evasionFromTree% tree</span>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:darkgray"><strong>Melee Evade %</strong></span>: @meleeEvadeChance%
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span style="color:darkgray"><strong>Proj. Evade %</strong></span>: @projEvadeChance%
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <strong>Resistances</strong>: <span style="color:@Utils.Colors.COLOR_FIRE">@fireResistance%</span>/
+                                <span style="color:@Utils.Colors.COLOR_COLD">@coldResistance%</span>/
+                                <span style="color:@Utils.Colors.COLOR_LIGHTNING">@lightResistance%</span>/
+                                <span style="color:@Utils.Colors.COLOR_CHAOS">@chaosResistance%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <h5 class="card-header" style="background-color:#383838">Offensive Stats</h5>
+                <div class="card-body px-0" style="background-color:#252525">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <span><strong>Full DPS</strong></span>: @combinedDps
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <strong>Crit Chance</strong>: @critChance%
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <strong>Crit Multiplier</strong>: @critMulti%
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <strong><span style="color:@Utils.Colors.COLOR_GEM_INT">Power Charges</span></strong>: @powerCharges
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <strong><span style="color:@Utils.Colors.COLOR_GEM_DEX">Frenzy Charges</span></strong>: @frenzyCharges
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <strong><span style="color:@Utils.Colors.COLOR_GEM_STR">Endurance Charges</span></strong>: @enduranceCharges
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <h5 class="card-header" style="background-color:#383838">Gems</h5>
+                <div class="card-body px-0" style="background-color:#252525">
+                    <div class="container mb-2">
+                        <div class="row no-gutters px-0">
+                            @foreach (GemSlot gemSlot in GemSlots)
+                            {
+                                <GemSlotView GemSlot="@gemSlot" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="card mb-2">
+                <h5 class="card-header" style="background-color:#383838">Configuration</h5>
+                <div class="card-body" style="background-color:#252525">
+                    <ConfigurationViewer Configurations=@Configurations/>
+                </div>
+            </div>
+            <div class="card">
+                <h5 class="card-header" style="background-color:#383838">Passive Skill Trees</h5>
+                <div class="card-body" style="background-color:#252525">
+                    <TreeSpecsViewer TreeSpecs=@TreeSpecs/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        @code {
+            [Parameter]
+            public string Code { get; set; }
+
+            private List<GemSlot> GemSlots { get; set; } = new List<GemSlot>();
+            private List<Configuration> Configurations { get; set; } = new List<Configuration>();
+            private List<TreeSpec> TreeSpecs { get; set; } = new List<TreeSpec>();
+
+            private string buildLevel { get; set; }
+            private string ascendancy { get; set; }
+            private string className { get; set; }
+            private string majorPantheon { get; set; }
+            private string minorPantheon { get; set; }
+            private string banditReward { get; set; }
+            private string totalLife { get; set; }
+            private string lifeFromTree { get; set; }
+            private string totalMana { get; set; }
+            private string manaFromTree { get; set; }
+            private string totalEs { get; set; }
+            private string esFromTree { get; set; }
+            private string lifeRegen { get; set; }
+            private string manaRegen { get; set; }
+            private string esRegen { get; set; }
+            private string unreservedLife { get; set; }
+            private string unreservedMana { get; set; }
+            private string totalDps { get; set; }
+            private string dotDps { get; set; }
+            private string combinedDps { get; set; }
+            private string attackBlock { get; set; }
+            private string spellBlock { get; set; }
+            private string spellSuppression { get; set; }
+            private string armor { get; set; }
+            private string physReduction { get; set; }
+            private string evasion { get; set; }
+            private string meleeEvadeChance { get; set; }
+            private string projEvadeChance { get; set; }
+            private string armorFromTree { get; set; }
+            private string evasionFromTree { get; set; }
+            private string fireResistance { get; set; }
+            private string coldResistance { get; set; }
+            private string lightResistance { get; set; }
+            private string chaosResistance { get; set; }
+            private string critChance { get; set; }
+            private string critMulti { get; set; }
+            private string powerCharges { get; set; }
+            private string frenzyCharges { get; set; }
+            private string enduranceCharges { get; set; }
+
+            protected override async Task OnInitializedAsync()
+            {
+                if (string.IsNullOrEmpty(Code))
+                {
+                    NavManager.NavigateTo("/");
+                    return;
+                }
+
+                await Task.Run(() =>
+                {
+                    XmlDocument buildXml = POBDecoder.GetBuildXML(Code);
+
+                    XmlElement rootElement = buildXml.DocumentElement;
+                    XmlNode? buildNode = rootElement.SelectSingleNode("Build");
+
+                    if (buildNode != null && buildNode.Attributes != null && buildNode.Attributes.Count > 00)
+                    {
+                        XmlAttribute? levelAttribute = buildNode.Attributes["level"];
+                        if (levelAttribute != null)
+                        {
+                            buildLevel = levelAttribute.Value.ToString();
+                        }
+
+                        XmlAttribute? ascendancyAttribute = buildNode.Attributes["ascendClassName"];
+                        if (ascendancyAttribute != null)
+                        {
+                            ascendancy = ascendancyAttribute.Value.ToString();
+                        }
+
+                        XmlAttribute? classNameAttribute = buildNode.Attributes["className"];
+                        if (classNameAttribute != null)
+                        {
+                            className = classNameAttribute.Value.ToString();
+                        }
+
+                        XmlAttribute? majorPantheonAttribute = buildNode.Attributes["pantheonMajorGod"];
+                        if (majorPantheonAttribute != null)
+                        {
+                            majorPantheon = majorPantheonAttribute.Value.ToString();
+                        }
+
+                        XmlAttribute? minorPantheonAttribute = buildNode.Attributes["pantheonMinorGod"];
+                        if (minorPantheonAttribute != null)
+                        {
+                            minorPantheon = minorPantheonAttribute.Value.ToString();
+                        }
+
+                        XmlAttribute? banditRewardAttribute = buildNode.Attributes["bandit"];
+                        if (banditRewardAttribute != null)
+                        {
+                            banditReward = banditRewardAttribute.Value.ToString();
+                        }
+                    }
+
+                    XmlNode lifeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Life']");
+                    if (lifeNode != null)
+                    {
+                        totalLife = lifeNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode lifeFromTreeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Spec:LifeInc']");
+                    if (lifeFromTreeNode != null)
+                    {
+                        lifeFromTree = lifeFromTreeNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode manaNode = buildNode.SelectSingleNode("PlayerStat[@stat='Mana']");
+                    if (manaNode != null)
+                    {
+                        totalMana = manaNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode manaFromTreeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Spec:ManaInc']");
+                    if (manaFromTreeNode != null)
+                    {
+                        manaFromTree = manaFromTreeNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode esNode = buildNode.SelectSingleNode("PlayerStat[@stat='EnergyShield']");
+                    if (esNode != null)
+                    {
+                        totalEs = esNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode esFromTreeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Spec:EnergyShieldInc']");
+                    if (esFromTreeNode != null)
+                    {
+                        esFromTree = esFromTreeNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode unreservedLifeNode = buildNode.SelectSingleNode("PlayerStat[@stat='LifeUnreserved']");
+                    if (unreservedLifeNode != null)
+                    {
+                        unreservedLife = unreservedLifeNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode unreservedManaNode = buildNode.SelectSingleNode("PlayerStat[@stat='ManaUnreserved']");
+                    if (unreservedManaNode != null)
+                    {
+                        unreservedMana = unreservedManaNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode totalDpsNode = buildNode.SelectSingleNode("PlayerStat[@stat='TotalDPS']");
+                    if (totalDpsNode != null)
+                    {
+                        totalDps = decimal.Parse(totalDpsNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode lifeRegenNode = buildNode.SelectSingleNode("PlayerStat[@stat='LifeRegen']");
+                    if (lifeRegenNode != null)
+                    {
+                        lifeRegen = lifeRegenNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode manaRegenNode = buildNode.SelectSingleNode("PlayerStat[@stat='ManaRegen']");
+                    if (manaRegenNode != null)
+                    {
+                        manaRegen = manaRegenNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode esRegenNode = buildNode.SelectSingleNode("PlayerStat[@stat='EnergyShieldRegen']");
+                    if (esRegenNode != null)
+                    {
+                        esRegen = esRegenNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode dotDpsNode = buildNode.SelectSingleNode("PlayerStat[@stat='TotalDotDPS']");
+                    if (dotDpsNode != null)
+                    {
+                        dotDps = decimal.Parse(dotDpsNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode combinedDpsNode = buildNode.SelectSingleNode("PlayerStat[@stat='CombinedDPS']");
+                    if (combinedDpsNode != null)
+                    {
+                        combinedDps = decimal.Parse(combinedDpsNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode attackBlockNode = buildNode.SelectSingleNode("PlayerStat[@stat='BlockChance']");
+                    if (attackBlockNode != null)
+                    {
+                        attackBlock = decimal.Parse(attackBlockNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode spellBlockNode = buildNode.SelectSingleNode("PlayerStat[@stat='SpellBlockChance']");
+                    if (spellBlockNode != null)
+                    {
+                        spellBlock = decimal.Parse(spellBlockNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode spellSuppressionNode = buildNode.SelectSingleNode("PlayerStat[@stat='SpellSuppressionChance']");
+                    if (spellSuppressionNode != null)
+                    {
+                        spellSuppression = decimal.Parse(spellSuppressionNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode armorNode = buildNode.SelectSingleNode("PlayerStat[@stat='Armour']");
+                    if (armorNode != null)
+                    {
+                        armor = decimal.Parse(armorNode.Attributes["value"].Value).ToString("N0");
+                    }
+
+                    XmlNode physReduceNode = buildNode.SelectSingleNode("PlayerStat[@stat='PhysicalDamageReduction']");
+                    if (physReduceNode != null)
+                    {
+                        physReduction = decimal.Parse(physReduceNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode evasionNode = buildNode.SelectSingleNode("PlayerStat[@stat='Evasion']");
+                    if (evasionNode != null)
+                    {
+                        evasion = decimal.Parse(evasionNode.Attributes["value"].Value).ToString("N0");
+                    }
+
+                    XmlNode meleeEvadeChanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='MeleeEvadeChance']");
+                    if (meleeEvadeChanceNode != null)
+                    {
+                        meleeEvadeChance = decimal.Parse(meleeEvadeChanceNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode projEvadeChanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='ProjectileEvadeChance']");
+                    if (projEvadeChanceNode != null)
+                    {
+                        projEvadeChance = decimal.Parse(projEvadeChanceNode.Attributes["value"].Value).ToString("N2");
+                    }
+
+                    XmlNode armorFromTreeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Spec:ArmourInc']");
+                    if (armorFromTreeNode != null)
+                    {
+                        armorFromTree = decimal.Parse(armorFromTreeNode.Attributes["value"].Value).ToString();
+                    }
+
+                    XmlNode evasionFromTreeNode = buildNode.SelectSingleNode("PlayerStat[@stat='Spec:EvasionInc']");
+                    if (evasionFromTreeNode != null)
+                    {
+                        evasionFromTree = decimal.Parse(evasionFromTreeNode.Attributes["value"].Value).ToString();
+                    }
+
+                    XmlNode fireResistanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='FireResist']");
+                    if (fireResistanceNode != null)
+                    {
+                        fireResistance = fireResistanceNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode coldResistanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='ColdResist']");
+                    if (coldResistanceNode != null)
+                    {
+                        coldResistance = coldResistanceNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode lightResistanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='LightningResist']");
+                    if (lightResistanceNode != null)
+                    {
+                        lightResistance = lightResistanceNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode chaosResistanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='ChaosResist']");
+                    if (chaosResistanceNode != null)
+                    {
+                        chaosResistance = fireResistanceNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode critChanceNode = buildNode.SelectSingleNode("PlayerStat[@stat='CritChance']");
+                    if (critChanceNode != null)
+                    {
+                        critChance = critChanceNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode critMultiNode = buildNode.SelectSingleNode("PlayerStat[@stat='CritMultiplier']");
+                    if (critMultiNode != null)
+                    {
+                        critMulti = critMultiNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode powerChargesNode = buildNode.SelectSingleNode("PlayerStat[@stat='PowerChargesMax']");
+                    if (powerChargesNode != null)
+                    {
+                        powerCharges = powerChargesNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode frenzyChargesNode = buildNode.SelectSingleNode("PlayerStat[@stat='FrenzyChargesMax']");
+                    if (frenzyChargesNode != null)
+                    {
+                        frenzyCharges = frenzyChargesNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode enduranceChargesNode = buildNode.SelectSingleNode("PlayerStat[@stat='EnduranceChargesMax']");
+                    if (enduranceChargesNode != null)
+                    {
+                        enduranceCharges = enduranceChargesNode.Attributes["value"].Value.ToString();
+                    }
+
+                    XmlNode skillsNode = rootElement.SelectSingleNode("Skills");
+                    GemSlots = GetGemSlotGroups(skillsNode);
+
+                    XmlNode configsNode = rootElement.SelectSingleNode("Config");
+                    if (configsNode.HasChildNodes)
+                    {
+                        XmlNode leechingNode = configsNode.SelectSingleNode("Input[@name='conditionLeeching']");
+                        if (leechingNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Is Leeching", Value = leechingNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode enemyChilledNode = configsNode.SelectSingleNode("Input[@name='conditionEnemyChilled']");
+                        if (enemyChilledNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Is Enemy Chilled", Value = enemyChilledNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode useFrenzyChargesNode = configsNode.SelectSingleNode("Input[@name='useFrenzyCharges']");
+                        if (useFrenzyChargesNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Use Frenzy Charges", Value = useFrenzyChargesNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode usePowerChargesNode = configsNode.SelectSingleNode("Input[@name='usePowerCharges']");
+                        if (usePowerChargesNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Use Power Charges", Value = usePowerChargesNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode useEnduranceChargesNode = configsNode.SelectSingleNode("Input[@name='useEnduranceCharges']");
+                        if (useEnduranceChargesNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Use Endurance Charges", Value = useEnduranceChargesNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode enemyBossNode = configsNode.SelectSingleNode("Input[@name='enemyIsBoss']");
+                        if (enemyBossNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Enemy Boss", Value = enemyBossNode.Attributes["string"].Value.ToString() });
+                        }
+
+                        XmlNode resonanceNode = configsNode.SelectSingleNode("Input[@name='configResonanceCount']");
+                        if (resonanceNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Resonance", Value = resonanceNode.Attributes["number"].Value.ToString() });
+                        }
+
+                        XmlNode projectileDistanceNode = configsNode.SelectSingleNode("Input[@name='projectileDistance']");
+                        if (projectileDistanceNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Projectile Distance", Value = projectileDistanceNode.Attributes["number"].Value.ToString() });
+                        }
+
+                        XmlNode elusiveNode = configsNode.SelectSingleNode("Input[@name='buffElusive']");
+                        if (elusiveNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Buff - Elusive", Value = elusiveNode.Attributes["boolean"].Value.ToString() });
+                        }
+
+                        XmlNode onslaughtNode = configsNode.SelectSingleNode("Input[@name='buffOnslaught']");
+                        if (onslaughtNode != null)
+                        {
+                            Configurations.Add(new Configuration { Name = "Buff - Onslaught", Value = onslaughtNode.Attributes["boolean"].Value.ToString() });
+                        }
+                    }
+
+                    XmlNode treeSpecsNode = rootElement.SelectSingleNode("Tree");
+                    TreeSpecs = GetTreeSpecs(treeSpecsNode);
+
+                });
+            }
+
+            private List<GemSlot> GetGemSlotGroups(XmlNode skillsNode)
+            {
+                List<GemSlot> gemSlots = new List<GemSlot>();
+                foreach (XmlNode skillNode in skillsNode.ChildNodes)
+                {
+                    if (skillNode.Attributes["slot"] == null) continue;
+
+                    GemSlot gemSlot = new GemSlot { Name = skillNode.Attributes["slot"].Value.ToString() };
+                    GemGroup gemGroup = new GemGroup();
+                    if (!skillNode.HasChildNodes) continue;
+
+                    foreach (XmlNode gemNode in skillNode.ChildNodes)
+                    {
+                        string gemName = gemNode.Attributes["nameSpec"].Value.ToString();
+                        bool isActive = gemNode.Attributes["gemId"] == null ? true : !gemNode.Attributes["gemId"].Value.ToString().Contains("/Support");
+                        Gem gem = new Gem { Name = gemName, Active = isActive };
+
+                        if (isActive)
+                        {
+                            if (gemGroup.MainGem != null)
+                            {
+                                gemSlot.GemGroups.Add(gemGroup);
+
+                                gemGroup = new GemGroup();
+                                gemGroup.MainGem = gem;
+                            }
+                            else
+                            {
+                                gemGroup.MainGem = gem;
+                            }
+                        }
+                        else
+                        {
+                            gemGroup.SupportGems.Add(gem);
+                        }
+                    }
+                    gemSlot.GemGroups.Add(gemGroup);
+                    gemSlots.Add(gemSlot);
+                }
+                return gemSlots;
+            }
+
+            private List<TreeSpec> GetTreeSpecs(XmlNode treeSpecsNode)
+            {
+                List<TreeSpec> treeSpecs = new List<TreeSpec>();
+                foreach (XmlNode specNode in treeSpecsNode.ChildNodes)
+                {
+                    TreeSpec treeSpec = new TreeSpec();
+                    if (specNode.Attributes["title"] != null)
+                    {
+                        treeSpec.Title = specNode.Attributes["title"].Value.ToString();
+                    }
+                    if (specNode.Attributes["nodes"] != null)
+                    {
+                        treeSpec.NodeIds = specNode.Attributes["nodes"].Value.ToString().Split(',').ToList();
+                    }
+                    if (specNode.SelectSingleNode("URL") != null)
+                    {
+                        treeSpec.Url = specNode.SelectSingleNode("URL").InnerText;
+                    }
+                    treeSpecs.Add(treeSpec);
+                }
+                return treeSpecs;
+            }
+            }
+

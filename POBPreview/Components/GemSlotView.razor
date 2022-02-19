@@ -1,0 +1,51 @@
+﻿@using Models;
+
+<div class="col-12 col-sm-6 col-lg-4">
+    <div class="card mx-0 mb-1" style="background-color:#383838">
+        <div class="card-body" style="background-color:#252525">
+            <h6 class="card-title">@GemSlot.Name</h6>
+            <div class="card-text">
+                <ul>
+                    @foreach (GemGroup gemGroup in GemSlot.GemGroups)
+                    {
+                        <li style="color:@GetGemColorByName(gemGroup.MainGem.Name)">@gemGroup.MainGem.Name</li>
+                        if (gemGroup.SupportGems.Count > 0)
+                        {
+                            <ul>
+                                @foreach (Gem supportGem in gemGroup.SupportGems)
+                                {
+                                    <li style="color:@GetGemColorByName(supportGem.Name)">@supportGem.Name</li>
+                                }
+                            </ul>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+    @code {
+        [Parameter]
+        public GemSlot GemSlot { get; set; }
+
+        private string GetGemColorByName(string name)
+        {
+            string colorValue;
+            if (Utils.GemMappings.RedGems.Contains(name.ToLower()))
+            {
+                return Utils.Colors.COLOR_GEM_STR;
+            }
+            else if (Utils.GemMappings.BlueGems.Contains(name.ToLower()))
+            {
+                return Utils.Colors.COLOR_GEM_INT;
+            }
+            else if(Utils.GemMappings.GreenGems.Contains(name.ToLower()))
+            {
+                return Utils.Colors.COLOR_GEM_DEX;
+            }
+
+            return string.Empty;
+        }
+    }
+

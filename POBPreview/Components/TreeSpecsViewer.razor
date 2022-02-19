@@ -1,0 +1,21 @@
+﻿<div>
+    @if (TreeSpecs.Count <= 0)
+    {
+        <span>No trees specified!</span>
+    }
+    else
+    {
+        <ul>
+            @foreach (TreeSpec treeSpec in TreeSpecs)
+            {
+                <li><a href="@treeSpec.Url" style="color: #FFFFFF; opacity: 87">@treeSpec.Title (@treeSpec.NodeIds.Count Passives)</a></li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<TreeSpec> TreeSpecs { get; set; } = new List<TreeSpec>();
+}
+
