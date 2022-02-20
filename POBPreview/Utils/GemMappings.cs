@@ -8,7 +8,9 @@ namespace POBPreview.Utils
 			"shield charge", "steelskin", "vitality", "lifetap", "arrogance", "inspiration",
 			"herald of purity", "cast when damage taken", "ancestral protector", "determination",
 			"defiance banner", "elemental damage with attacks", "vaal molten shell", "molten shell",
-			"herald of ash", "increased duration"
+			"herald of ash", "increased duration", "ancestral warchief", "vaal ancestral warchief",
+			"berserk", "multistrike", "empower", "multiple totems", "anger", "general's cry",
+			"enduring cry"
 		};
 
 		public static List<string> GreenGems = new List<string>
@@ -17,7 +19,8 @@ namespace POBPreview.Utils
 			"lesser multiple projectiles", "volley", "greater volley", "faster attacks", "precision",
 			"nightblade", "grace", "vaal grace", "herald of agony", "withering step", "blade vortex",
 			"vaal blade vortex", "plague bearer", "cold penetration", "hatred", "ice bite", "herald of ice",
-			"tornado", "onslaught", "whirling blades"
+			"tornado", "onslaught", "whirling blades", "blood rage", "added cold damage", "lightning strike",
+			"vaal lightning strike", "culling strike"
 		};
 
 		public static List<string> BlueGems = new List<string>
@@ -25,7 +28,8 @@ namespace POBPreview.Utils
 			"flame dash", "unbound ailments", "temporal chains", "despair", "blasphemy",
 			"increased area of effect", "unleash", "increased critical damage",
 			"power charge on critical", "vortex", "bonechill", "arcane surge", "frostbite",
-			"trinity", "added lightning damage", "herald of lightning", "hydrosphere", "efficacy"
+			"trinity", "added lightning damage", "herald of lightning", "hydrosphere", "efficacy",
+			"assassin's mark", "awakened added lightning damage", "enlighten"
 		};
 	}
 }

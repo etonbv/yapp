@@ -7,18 +7,23 @@
             <div class="card-text">
                 <ul>
                     @foreach (GemGroup gemGroup in GemSlot.GemGroups)
-                    {
-                        <li style="color:@GetGemColorByName(gemGroup.MainGem.Name)">@gemGroup.MainGem.Name</li>
-                        if (gemGroup.SupportGems.Count > 0)
                         {
-                            <ul>
-                                @foreach (Gem supportGem in gemGroup.SupportGems)
-                                {
-                                    <li style="color:@GetGemColorByName(supportGem.Name)">@supportGem.Name</li>
-                                }
-                            </ul>
+                            if (gemGroup.MainGem != null)
+                            {
+                                <li style="color:@GetGemColorByName(gemGroup.MainGem.Name)">@gemGroup.MainGem.Name</li>
+                            }
+
+                            if (gemGroup.SupportGems.Count > 0)
+                            {
+                                <ul>
+                                    @foreach (Gem supportGem in gemGroup.SupportGems)
+                                        {
+                                        <li style="color:@GetGemColorByName(supportGem.Name)">@supportGem.Name</li>
+                                        }
+                                </ul>
+                            }
+
                         }
-                    }
                 </ul>
             </div>
         </div>
