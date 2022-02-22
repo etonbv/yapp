@@ -2,6 +2,7 @@
 @inject NavigationManager NavManager
 @inject PastebinRawService PastebinService
 @using POBPreview.Models;
+@using System.Text.Json;
 
 <PageTitle>Path of Building Preview</PageTitle>
 
@@ -33,7 +34,10 @@ Paste your Path of Building code in the text area below for an overview of the b
         string pobCodeTxt;
         if (PastebinService.PastebinRegex.IsMatch(pobCode.Code))
         {
-            pobCodeTxt = await PastebinService.GetPOBCode(pobCode.Code);
+            string pobJson;
+            pobJson = await PastebinService.GetPOBCode(pobCode.Code);
+            var json = JsonDocument.Parse(pobJson);
+            pobCodeTxt = json.RootElement.GetProperty("contents").GetString();
         }
         else
         {
