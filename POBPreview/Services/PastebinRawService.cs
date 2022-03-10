@@ -12,7 +12,7 @@ namespace POBPreview
         {
             HttpClient web = new HttpClient();
 			string pasteKey = PastebinRegex.Match(url).Groups["key"].Value;
-			return await web.GetStringAsync($"https://www.whateverorigin.org/get?url=https://pastebin.com/raw/{pasteKey}");
+			return await web.GetStringAsync($"https://api.allorigins.win/get?url=https://pastebin.com/raw/{pasteKey}");
 		}
 	}
 }
